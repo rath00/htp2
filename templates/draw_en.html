@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="" content="width=device-width, initial-scale=1.0">
+  <title>Who am I</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/all.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/loaders.css/0.1.2/loaders.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tracking.js/1.1.3/tracking-min.js" integrity="sha512-NLnT5IDjHmjRQffIgM8tNqIExcKvCN/YBc0dsLhoBB09xxmQ32nmj2ffTj7tuC6Jf9CjPysdXoEKHNZfrMqIzg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tracking.js/1.1.3/data/face-min.js" integrity="sha512-97Gg1eqBpQsyDIOFHYeYCYcBfgPOMJpepi9CPOloMWFx1zq6Tg9vq+z8t/G8YHzDHBs/OJHykZyDZ2Y/tb9y3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tracking.js/1.1.3/data/eye-min.js" integrity="sha512-BQw5EmfJJvdd1GnjO4XUe2SsUPwzk024rwc3YUVyry1oZbRC69wQpfYUjYhtKnAgK++E1og9NSGtlGhDclACrg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tracking.js/1.1.3/data/mouth-min.js" integrity="sha512-l8MsM9lKoVZZ5WKiwsojuVukrAqBflwR/Mw6ZFBcpwlvp8eZ1BVGMPtKOmOQ2LP+aYBWwdfxpxFhxIfZix0Y6Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/loaders.css/0.1.2/loaders.css.js"></script>
+  <script src="https://kit.fontawesome.com/c846160a1d.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js" crossorigin="anonymous"></script>
+  <script src="http://html2canvas.hertzen.com/dist/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    .rect {
+      border: 2px solid red;
+      left: 0px;
+      position: absolute;
+      top: 0px;
+      z-index: 1;
+    }
+    #panel {
+      background-repeat: no-repeat;
+      position: relative;
+      /* display: none; */
+    }
+    p{
+      word-wrap: break-word;
+    }
+    </style>
+</head>
+
+<body>
+  <section id="paint_board">
+    <div class="header">
+      <h1>Draw a picture of houses, trees and people and save it</h1>
+    </div>
+    <div class="container">
+
+      <div class="functionBar">
+        <ul class="colorLis barContainer">
+          <!--li><a href="#" class="color" style="background: #FF0000"></a></li>
+          <li><a href="#" class="color" style="background: #000000"></a></li>
+          <--li><a href="#" class="color" style="background: #ffffff"></a></li-->
+        </ul>
+      </div>
+
+      <div class="canvasContainer">
+        <canvas class="canvas" width = '0' height='0' id='canvas'></canvas>
+      </div>
+      <div class="functionBar">
+        <div class="barContainer">
+          <!--繪圖工具-->
+          <ul class='toolLis'>
+            <li><a href="#" class='saveBtn' download = {{name}}><i class="fas fa-save"></i></a></li>
+            <li><button class='brushType'><i class="fas fa-paint-brush"></i></button></li>
+          </ul>
+          <ul class="sizeBar">
+          </ul>
+        </div>
+        <a href="/generic_en" class="done">UPLOAD</a>
+        <img src="./img/images23.jpg" alt="">
+      </div>
+    </div>
+    
+    <div class="footer"></div>
+  </section>
+
+  <!--section id="result_page" >
+    <div class="header"></div>
+    <div class="container">
+      <div id="result_inner">
+        <div class="result_img_wrapper">
+          <h2>測驗結果</h2>
+          <div class="result_img">
+            <img src="./img/images23.jpg" alt="">
+          </div>
+          <div class="downloadBtn">
+            <a href="#" class="download_result"><i class="fa-solid fa-download"></i>Result</a>
+            <a href="#" class="download_vedio"><i class="fa-solid fa-download"></i>Vedio</a>
+          </div>
+          
+        </div>
+        <div class="result_desc">
+          <ul id="result"></ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer"></div>
+    <div class="loading_page">
+      <div class="loader-inner ball-spin-fade-loader"></div>
+    </div>
+  </section-->
+
+
+  <div id="panel" class="demo-container" style="display: none;"></div>
+  </body>
+
+  <script src="{{ url_for('static', filename='js/all.js') }}"></script>
+</html>
