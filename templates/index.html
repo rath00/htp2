@@ -21,8 +21,6 @@
 					<header id="header" >
 						<span class="logo"><img src="{{ url_for('static', filename='images/logo.svg') }}" alt="" /></span>
 						<h1>Welcome</h1>
-						<p><br />
-						<!--built by <a href="https://twitter.com/ajlkn">@ajlkn</a> for <a href="https://html5up.net">HTML5 UP</a>.</p>-->
 					</header>
 
 				<!-- Nav -->
@@ -65,7 +63,6 @@
 								</div>
 							</section>
 							
-
 						<!-- First Section -->
 							<!--section id="first" class="main special">
 								<header class="major">
@@ -155,13 +152,7 @@
 										<p>國立彰化師範大學</p>
 									</li>
 								</ul>
-								<footer class="major">
-									<ul class="actions special">
-										<!--li><a href="generic.html" class="button">Learn More</a></li-->
-									</ul>
-								</footer>
 							</section>
-
 					</div>
 
 				<!-- Footer -->
@@ -197,13 +188,13 @@
 			</div>
 
 		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+			<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+			<script src="{{url_for('static', filename='js/jquery.scrollex.min.js')}}"></script>
+			<script src="{{url_for('static', filename='js/jquery.scrolly.min.js')}}"></script>
+			<script src="{{url_for('static', filename='js/browser.min.js')}}"></script>
+			<script src="{{url_for('static', filename='js/breakpoints.min.js')}}"></script>
+			<script src="{{url_for('static', filename='js/util.js')}}"></script>
+			<script src="{{url_for('static', filename='js/main.js')}}"></script>
 
 	</body>
 </html>
