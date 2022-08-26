@@ -173,7 +173,8 @@ def detect(image_position):
     # 確保有偵測到房樹人後再開始進行分析
     if classes[9]==0 and classes[10]==0 and classes[11]==0:
         result=result+'Unable to identify successfully. Please re-enter the correct pictures of houses, trees, and people, or contact professionals for analysis.'
-        result_dc=result_dc+'DETECT ERROR.'
+        result_dc=result_dc+'This picture system cannot be successfully identified, and needs to be read and analyzed carefully.'
+        warn=warn+'DETECT ERROR!'
     else:
         # 房的結果
         result=result+('  It can be seen from your picture,')

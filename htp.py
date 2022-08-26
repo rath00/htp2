@@ -178,7 +178,8 @@ def detect(image_position):
      # 確保有偵測到房樹人後再開始進行分析
     if classes[9]==0 and classes[10]==0 and classes[11]==0:
         result=result+'無法成功辨識，請再次輸入正確含有房樹人的圖片或是聯絡專業人士進行分析。'
-        result_dc=result_dc+'無法成功進行辨識。'
+        result_dc=result_dc+'此張圖系統無法成功辨識, 需再仔細閱讀和分析。'
+        warn=warn+'無法成功進行辨識!'
     else:
         # 房的結果
         result=result+('  由你的圖可知，')
