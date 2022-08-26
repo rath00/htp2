@@ -176,8 +176,8 @@ def detect(image_position):
     warn=''
     # classes=[0door,1window,2chimney,3crown,4bark,5fruit,6face,7body,8neck,9house,10tree,11person]
      # 確保有偵測到房樹人後再開始進行分析
-    if classes[0]==0 and classes[0]==0 and classes[0]==0:
-        result=result+'偵測錯誤，請再次輸入正確含有房樹人的圖片或是聯絡專業人士進行分析。'
+    if classes[9]==0 and classes[10]==0 and classes[11]==0:
+        result=result+'無法成功辨識，請再次輸入正確含有房樹人的圖片或是聯絡專業人士進行分析。'
         result_dc=result_dc+'無法成功進行辨識。'
     else:
         # 房的結果
