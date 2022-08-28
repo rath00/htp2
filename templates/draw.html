@@ -1,3 +1,4 @@
+<!--繪圖版網頁-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,38 +38,25 @@
 
 <body>
   <section id="paint_board">
+    <!--上方的指導語-->
     <div class="header">
       <h1>畫下一張存在房子、樹木和人的畫作，並將畫作儲存</h1>
     </div>
     <div class="container">
-
-      <div class="functionBar">
-        <!--ul class="colorLis barContainer">
-          <li><a href="#" class="color" style="background: #FF0000"></a></li>
-          <li><a href="#" class="color" style="background: #000000"></a></li>
-          <li><a href="#" class="color" style="background: #ffffff"></a></li>
-        </ul-->
-      </div>
-
+      <!--繪圖板-->
       <div class="canvasContainer">
-        <canvas class="canvas" width = '0' height='0' id='canvas'></canvas>
+        <canvas style="height:80%;width:80%;position:absolute;top:10%;left:10%;" class="canvas" width = '0' height='0' id='canvas'></canvas>
       </div>
-      <div class="functionBar">
+      <!--繪圖工具-->
+      <div class="functionBar" style="position:absolute;left:90%;">
         <div class="barContainer">
-          <!--繪圖工具-->
           <ul class='toolLis'>
             <li><a href="#" class='saveBtn' download ={{name}}	><i class="fas fa-save"></i></a></li>
-            <!--li><button class='clearAll'><i class="fas fa-expand"></i></button></li>
-            <li><button class='undoBtn'><i class="fas fa-undo-alt"></i></button></li>
-            <li><button class='redoBtn'><i class="fas fa-redo-alt"></i></button></li-->
             <li><button class='brushType'><i class="fas fa-paint-brush"></i></button></li>
-            <!--li><button class='eraserBtn'><i class="fas fa-eraser"></i></button></li-->
-          </ul>
-          <ul class="sizeBar">
           </ul>
         </div>
+        <!--回到上傳圖片的網頁-->
         <a href="/generic" class="done">UPLOAD</a>
-        
       </div>
     </div>
     

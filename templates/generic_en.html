@@ -1,3 +1,4 @@
+<!--上傳圖片的網頁-->
 <!DOCTYPE HTML>
 <!--
 	Stellar by HTML5 UP
@@ -28,21 +29,19 @@
 
 						<!-- Content -->
 							<section id="content" class="main">
-								<!--放圖片的-->
-								<!--span class="image main"><img src="images/pic04.jpg" alt="" /></span-->
 								<h2>Choose How to Paint</h2>
 								<p>
 									You can choose to use the drawing board on the webpage to draw and save it, or you can choose to draw on your own paper and then upload the file.</p>
 								<p></p>
 								<ul class="actions">
-									
+									<!--跳轉到繪圖版-->
 									<li>
 										<label class="button icon solid solidfa-download">
 										<a id="upload_img" style="display:none;" href="/draw_en" ><input type="submit"></a>
 										<i class="fa fa-photo"></i> Drawing Board
 										</label>
 									</li>
-									
+									<!--上傳圖片-->
 									<form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_file_en')}}">
 									<li>
 										<label class="button icon solid fa-upload">
@@ -56,6 +55,7 @@
 										</label>
 									</li>
 									</form>
+
 								</ul>
 							</section>
 

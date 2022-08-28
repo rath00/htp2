@@ -1,3 +1,4 @@
+<!--首頁-->
 <!DOCTYPE HTML>
 <!--
 	Stellar by HTML5 UP
@@ -23,7 +24,7 @@
 						<h1>Welcome</h1>
 					</header>
 
-				<!-- Nav -->
+				<!-- Nav --> <!-- 可控制跳轉到頁面上特定段落 -->
 					<nav id="nav">
 						<ul>
 							<li><a href="#intro" class="active">Introduction</a></li>
@@ -54,15 +55,18 @@
 											You can redraw the same objects, but do not modify the lines! 
 											In terms of time, please complete the idea within five minutes and complete the painting within ten minutes~
 										</p>
+										<!-- 兩個按鈕分別可跳轉到中文版和英文版的測驗網頁 -->
 										<ul class="actions">
 											<li><a href="generic" class="button">開始</a></li>
 											<li><a href="generic_en" class="button">Get Started</a></li>
 										</ul>
 									</div>
+									<!-- 讀取靜態資料夾中的圖片檔案並顯示，由src="{{ url_for('static', filename='images/pic01.jpg') }}"控制-->
 									<span class="image"><img src="{{ url_for('static', filename='images/pic01.jpg') }}" alt="" /></span>
 								</div>
 							</section>
-							
+						
+						<!-- 原始模板的其他段落 -->
 						<!-- First Section -->
 							<!--section id="first" class="main special">
 								<header class="major">
@@ -115,7 +119,7 @@
 								</footer>
 							</section-->
 
-						<!-- Get Started -->
+						<!-- About Us -->
 							<section id="cta" class="main special">
 								<header class="major">
 									<h2>製作團隊成員<br />About Us</h2>
