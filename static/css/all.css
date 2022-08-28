@@ -332,7 +332,7 @@ body{
 }
 
 .canvasContainer{
-  border-radius: 20%;
+  border-radius: 20px;
   /* overflow: hidden; */
 }
 .downloadBtn{
