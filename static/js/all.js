@@ -18,7 +18,6 @@ let brush = {
   size:5,
 };
 
-
 let chunksLis = [];
 const stream = canvas.captureStream(60); // 60 FPS recording
 const recorder = new MediaRecorder(stream, {
@@ -95,6 +94,7 @@ const initial = () =>{
   drawHistory = [];
   pushHistory();
 }
+
 const undo = (e) =>{
   e.preventDefault;
   if(step < 0){
@@ -223,9 +223,11 @@ const eventListaner = () => {
   downloadResult.addEventListener('click', ()=>dowloadFile(0));
   downloadVedio.addEventListener('click',  ()=>dowloadFile(1));
   canvasContainer.addEventListener('mouseleave', ()=> status = false, false);
-  window.addEventListener('resize', ()=>{
+
+  window.addEventListener('resize', initial);
+  /*()=>{ 
     touch = false;
-  })
+  })*/
   const a = document.querySelectorAll('a');
   a.forEach(item => {
     item.addEventListener('click', (e)=> {
