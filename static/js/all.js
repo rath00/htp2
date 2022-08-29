@@ -198,32 +198,32 @@ const load = () =>{
 }
 
 const eventListaner = () => {
-  const undoBtn = document.querySelector('.undoBtn');
-  const redoBtn = document.querySelector('.redoBtn');
-  const clearAll  = document.querySelector('.clearAll');
-  const brushType = document.querySelector('.brushType');
-  const eraserBtn = document.querySelector('.eraserBtn');
-  const color = document.querySelectorAll('.color');
-  const size = document.querySelectorAll('.size');
+  //const undoBtn = document.querySelector('.undoBtn');
+  //const redoBtn = document.querySelector('.redoBtn');
+  //const clearAll  = document.querySelector('.clearAll');
+  //const brushType = document.querySelector('.brushType');
+  //const eraserBtn = document.querySelector('.eraserBtn');
+  //const color = document.querySelectorAll('.color');
+  //const size = document.querySelectorAll('.size');
   const canvasContainer = document.querySelector('.canvasContainer');
-  const downloadResult = document.querySelector('.download_result');
-  const downloadVedio = document.querySelector('.download_vedio');
+  //const downloadResult = document.querySelector('.download_result');
+  //const downloadVedio = document.querySelector('.download_vedio');
   canvas.addEventListener('mousedown', getPos);
   canvas.addEventListener('touchstart', getPos, false);
   canvas.addEventListener('mousemove', draw);
   canvas.addEventListener('touchmove', draw, false);
   canvas.addEventListener('mouseup', stopDraw);
   saveBtn.addEventListener('click', save);
-  undoBtn.addEventListener('click', undo);
-  redoBtn.addEventListener('click', redo);
-  clearAll.addEventListener('click', initial);
-  brushType.addEventListener('click', brushFn);
-  eraserBtn.addEventListener('click', eraser);
+  //undoBtn.addEventListener('click', undo);
+  //redoBtn.addEventListener('click', redo);
+  //clearAll.addEventListener('click', initial);
+  //brushType.addEventListener('click', brushFn);
+  //eraserBtn.addEventListener('click', eraser);
   done.addEventListener('click', drawDone);
-  downloadResult.addEventListener('click', ()=>dowloadFile(0));
-  downloadVedio.addEventListener('click',  ()=>dowloadFile(1));
+  //downloadResult.addEventListener('click', ()=>dowloadFile(0));
+  //downloadVedio.addEventListener('click',  ()=>dowloadFile(1));
   canvasContainer.addEventListener('mouseleave', ()=> status = false, false);
-
+  initial();
   window.addEventListener('resize', initial);
   /*()=>{ 
     touch = false;
@@ -234,6 +234,7 @@ const eventListaner = () => {
       e.preventDefault
     })
   });
+  /*
   for(i=0;i<color.length;i++){
     color[i].addEventListener('click', changeColor)
   };
@@ -241,6 +242,7 @@ const eventListaner = () => {
   for(i=0;i<size.length;i++){
     size[i].addEventListener('click', changeSize)
   }
+  */
 };
 
 const changePage = (pageEl, displayValue = 'block') => {
@@ -253,7 +255,7 @@ interfaceSetup();
 load();
 startRecord();
 eventListaner();
-changePage(paintBoard);
+//changePage(paintBoard);
 
 
 const panel = document.getElementById('panel');
