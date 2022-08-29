@@ -69,8 +69,6 @@ const drawDone = () => {
   const resultPage = document.querySelector('#result_page');
   recorder.setAttribute('href', image);
 
-  saveBtn.setAttribute('href', image);
-
   done.ATTRIBUTE_NODE
   changePage(resultPage);
   trackingImg(image);
