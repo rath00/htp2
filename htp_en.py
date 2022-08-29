@@ -14,7 +14,8 @@ UPLOAD_FOLDER = os.path.join(SRC_PATH)
 print(UPLOAD_FOLDER)
 
 def detect(image_position):
-    print(image_position)
+    # print(image_position)
+    # 導入 YOLO 辨識類別：
     LABELS = open(UPLOAD_FOLDER+"/obj(1)/obj.names").read().strip().split("\n")
     np.random.seed(666)
     COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")
@@ -36,6 +37,7 @@ def detect(image_position):
     end = time.time()
     print("YOLO took {:.6f} seconds".format(end - start))
 
+    # 建立儲存不同資訊的陣列
     boxes = []
     confidences = []
     classIDs = []
@@ -74,7 +76,7 @@ def detect(image_position):
     # 非最大值抑制，確定唯一邊框，原始參數:idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.3)
     idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.0, 0.3)
         
-    
+    # 建立紀錄偵測各個類別種數的陣列
     door=0
     window=0
     chimney=0
@@ -110,7 +112,7 @@ def detect(image_position):
             #  cv2.putText(影像, 文字, 座標, 字型, 大小, 顏色, 線條寬度, 線條種類)
             cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                 1.0, color, 2, lineType=cv2.LINE_AA)
-
+            # 記錄到個類別偵測到多少物件
             for j in range(len(classes)):
                 if LABELS[classIDs[i]]==LABELS[j]:
                     classes[j]=classes[j]+1
@@ -118,7 +120,6 @@ def detect(image_position):
             txt=txt+'%d'%classIDs[i]+' %f'%txtas[i][0]+' %f'%txtas[i][1]+' %f'%txtas[i][2]+' %f'%txtas[i][3]+'\n'
 
             # 取得房樹人中心座標
-            
             if LABELS[classIDs[i]]=='house':
                 hp=[x+(w/2),y+(h/2)]
                 hps.append(hp)
@@ -137,7 +138,7 @@ def detect(image_position):
         
 
         #print('\n'+txt) # 測試自動標註的檔案
-        
+        # 儲存自動標註的.txt檔案
         name=os.path.basename(image_position)
         name = name.split(".")[0] #去掉檔案格式，取得檔案原名稱
         
@@ -179,70 +180,69 @@ def detect(image_position):
         # 房的結果
         result=result+('  It can be seen from your picture,')
         if classes[0]>=1:   # 有門
-            result=result+('you do not exclude contact with the outside world,') # 原：你個性可能比較外向，想要和他人接觸相處，也希望能找到能夠理解自己的人，不過相對起來也可能會比較依賴他人，
+            result=result+('you do not exclude contact with the outside world,') 
             result_dc=result_dc+('  The illustrator may be more outgoing, wants to communicate with others and be understood, and likes to rely on others;')
         elif classes[0]==0: # 沒門
-            result=result+('your personality is more independent,') # 原：你比較保守，在和他人相處上也比較慢熟，比較喜歡和自己相處的時光，在家庭方面也是屬於比較獨立的人，不太依賴他人，
+            result=result+('your personality is more independent,') 
             result_dc=result_dc+('  The illustrator may be more defensive towards the outside world, dislikes others taking the initiative to approach them, and their personality is relatively cold and withdrawn, relationships are not deep;') 
         if classes[1]>=1:   # 有窗
-            result=result+('like to make friends, ') # 原：不會排斥讓別人了解自己，也比較希望能和別人交流和溝通，
+            result=result+('like to make friends, ') 
             result_dc=result_dc+('The illustrator has a willingness to communicate with the outside world;')
         elif classes[1]==0: # 沒窗
-            result=result+('relatively cautious, ') # 原：在個性上也比較謹慎，不太會輕易下決定，在和他人相處上也是，比較不會主動去與陌生人交際，
+            result=result+('relatively cautious, ') 
             result_dc=result_dc+('The illustrator may be more withdrawn, may be more paranoid in getting along with others, and may also have a tendency to possess delusions of persecution, but a conclusion can only be made after careful evaluation, and it is only speculation at present;') 
             warn=warn+'May be prone to delusions of persecution!'
         if classes[2]>=1:   # 有煙囪
-            result=result+('and values the family.') # 原：你關注家庭，會在意家庭上給予的溫暖和權力；
+            result=result+('and values the family.') 
             result_dc=result_dc+('The illustrator may have been more concerned with the home and the warmth given by the home.\n')
         elif classes[2]==0: # 沒煙囪
-            result=result+('and pursuit of family warmth.') # 原：最近你的情緒可能比較低落，在家庭方面可能有遇到一些問題，需要溫暖和幫助；
+            result=result+('and pursuit of family warmth.') 
             result_dc=result_dc+('The illustrator may have been relatively passive recently and lacked psychological warmth in the family.\n')
             warn=warn+'Family relation may not be close!'
         # 樹的結果 3crown,4bark,5fruit
         result=result+('In addition,')
         if classes[3]>=1:   # 有樹冠
-            result=result+('you are more positive,') # 原：你對未來可能有遠大的目標，比較積極上進，對自己也比較有信心，個性樂觀，
+            result=result+('you are more positive,') 
             result_dc=result_dc+('  The illustrator may have less self-confidence problems, and may have a certain degree of self-confidence in themselves and a desire to make progress;')
         elif classes[3]==0: # 沒樹冠
-            result=result+('you are not keen on communication,') # 原：你個性比較內向，不是很擅長跟別人相處，對自己也比較沒有信心，
+            result=result+('you are not keen on communication,') 
             result_dc=result_dc+('  The illustrator may have low self-esteem and depression, and the personality is relatively introverted and not able to communicate well with others. In addition, there is the possibility of suffering from schizophrenia, but it needs further understanding and can only be confirmed after diagnosis by an expert;')
             warn=warn+'Possibility of schizophrenia!'
         if classes[4]>=1:   # 有樹紋 
-            result=result+('Observant person') # 原：在過去你可能有遇到一些問題和事件，在心中留下一些影響，且對事物可能比較敏銳，也比較有觀察力，
+            result=result+('Observant person') 
             result_dc=result_dc+('The illustrator may be more sensitive to the outside world in personality, and they may have encountered some things in the process of growing up, which may affect them;')
             warn=warn+'There may be some harm in growing up!'
         elif classes[4]==0: # 沒樹紋
-            result=result+('Energetic person') # 原：在生活上你比較積極，很有活力和生命力，比較重視現實但也保有一些期望和想像力，
+            result=result+('Energetic person') 
             result_dc=result_dc+('The tree in the picture is very simple and has no bark, indicating that the illustrator may not have encountered any difficulties in the past, or has gotten out of the difficulties, and is currently living a positive life;')
         if classes[5]>=1:   # 有果實
-            result=result+(', expects a successful future.') # 原：近期你對自己和生活上可能有一些期待和想要達成的目標；
+            result=result+(', expects a successful future.') 
             result_dc=result_dc+('The illustrator may have some desires and goals.\n')
         elif classes[5]==0: # 沒果實
-            result=result+('.') # 原：目前你可能沒有什麼想要達成的事情，比較謙虛不會自負，但對自己的發展比較沒有頭緒；
+            result=result+('.') 
             result_dc=result_dc+('The illustrator may not have set achievable goals at present, and they may not have any requirements for themself at present.\n')
         # 人的結果 6face,7body,8neck
         result=result+('At the same time,')
         if classes[7]>=1:   # 有火柴人
-            result=result # 原：你不太願意表露真實的自我，在圖畫中也有所掩飾，且可能對這項測驗比較有防禦性或拒絕的態度，
+            result=result 
             result_dc=result_dc+('  The illustrator has the ability to cover up, has a strong ability to lie, may be reluctant to reveal their true self, and is defensive;')
         elif classes[7]==0: # 沒火柴人
-            result=result # 原：你對此測驗有一定的信任程度，畫作中也沒有特別隱藏和掩飾，
+            result=result 
             result_dc=result_dc+('  The illustrator has a certain degree of trust in this test, and they are less suspicious of the test, and they do not hide or cover up too much;')
         if classes[6]>=1:   # 有五官
-            result=result+('you are easy to adapt to the environment,') # 原：你願意和外界接觸，也比較擅長適應新的環境，
+            result=result+('you are easy to adapt to the environment,') 
             result_dc=result_dc+('Illustrators may be willing to engage with the outside world, and are less prone to maladaptation in new environments;')
         elif classes[6]==0: # 沒五官
-            result=result+('you are shy,') # 原：你可能不太擅長應付交際方面的事務，個性比較害羞，進入新環境時需要相對較多的時間來適應，
+            result=result+('you are shy,') 
             result_dc=result_dc+('Illustrators may prefer to avoid interpersonal relationships, are not able to adapt well to the environment, are more shy and more self-conscious;')
         if classes[8]>=1:   # 有脖子
-            result=result+('is less likely to be influenced by emotions') # 原：在處理事物時你比較理性，能夠控制自己的情緒，偏好會思考過後再做決定，不太會被情緒左右。
+            result=result+('is less likely to be influenced by emotions') 
             result_dc=result_dc+('The person in the picture has a connection between intelligence and emotion, and it is more likely to do things by instinct.\n\n')
         elif classes[8]==0: # 沒脖子
-            result=result+('easier to show personal traits') # 原：在處理事物時你比較感性，做事比較依循著內心的聲音，會勇敢去嘗試任何事物，但遇到問題時比較不太擅長應變。
+            result=result+('easier to show personal traits') 
             result_dc=result_dc+('Illustrators are less connected between intelligence and emotion, may act impulsive and reckless, and may also be less adaptable and less flexible.\n\n')
         
         # 對房樹整體大小和位置的分析
-
         # 距離關係
         Far=''
         Near=''
@@ -312,14 +312,14 @@ def detect(image_position):
         area_obj=ax*ay
         area_pic=H*W
         
-
+        # 大小及位置關係
         if area_obj>(2*area_pic/3):
             print('畫面大於三分之二')
-            result=result+(', is a straightforward and enthusiastic person') # 原：而在個性上你可能比較善待自己、重視自身，在內心的情緒是比較高昂的，可能有好動、率直和易受情緒波動影響的特質。
+            result=result+(', is a straightforward and enthusiastic person') 
             result_dc=result_dc+('\n'+'  The illustrator may emphasize the existence of self, and is less aware of changes in the environment and atmosphere, but their heart is full of tension, fantasy and hostility. May be more aggressive, intimidating, and aggressive, but also more active, emotional, and straightforward.')
         elif area_obj<(area_pic/9):
             print('畫面小於九分之一')
-            result=result+(', is an introverted person but does not hate crowds') # 原：而在個性上你可能比較內向， 不太擅長適應新環境，對自己也比較沒有信心，也比較依賴他人。
+            result=result+(', is an introverted person but does not hate crowds') 
             result_dc=result_dc+('\n'+'  The illustrator may be shy and introverted, unsuitable for the environment, and less confident in self-repression, may lack a sense of security, and be withdrawn, and dependent on others. When someone breaks their sense of self, they may appear more anxious and depressed.')
         
         if area_obj<=(area_pic/3):
@@ -330,39 +330,39 @@ def detect(image_position):
             # 左側
             if 0<= mx< (W/3) and (H/3)<=my<=(2*H/3):
                 print('圖形在左邊')
-                result=result+(', likely to long for, miss, or yearn for the past.') # 原：另外你可能也比較感性，在個性上因此比較容易衝動，另外也相對念舊，會留念過去。
+                result=result+(', likely to long for, miss, or yearn for the past.') 
                 result_dc=result_dc+('\n'+'  In the picture, the proportion of room, number and person is less than one-third of the picture and concentrated in the left side of the picture. The left side symbolizes the past, emotional world and femininity, which means that the illustrator may be impulsive in personality, and may focus on the past and have a memory of the past.')
             # 中間
             elif (W/3)<= mx< (2*W/3) and (H/3)<=my<=(2*H/3):
                 print('圖形在中間')
-                result=result+('。') # 原：另外你有較強的自我意識，但在內心中可能又有一些不安，在努力想要維持心中的平衡。
+                result=result+('。') 
                 result_dc=result_dc+('\n'+'  Indicates a sense of security. The self-awareness of the illustrator may be strong. This person may be more self-centered if it is an adult (it may be in the middle of the picture). There is a sense of unease inside, and this person may want to try to maintain inner balance; if a disadvantaged child is concerned, it may indicate that they are more concerned about themself, has poor plasticity, and is not able to objectively understand the environment.')
             # 右側
             elif (2*W/3)<= mx< W and (H/3)<=my<=(2*H/3):
                 print('圖形在右邊')
-                result=result+(', and has a vision for the future.') # 原：另外你可能比較理性，比較能自我控制，對未來抱有憧憬。
+                result=result+(', and has a vision for the future.') 
                 result_dc=result_dc+('\n'+'  In the picture, the proportion of room, number and person is less than one-third of the picture and concentrated on the right side of the picture. The right side symbolizes the future, rationality and masculinity, which means that the illustrator may be more rational in personality, and may be more masculine. This person may focus on the future rather than the present.')
             # 上側
             elif (W/3)<= mx< (2*W/3) and 0<=my<=(H/3):
                 print('圖形在上側')
-                result=result+(', and the personality is optimistic.') # 原：另外你可能正在追求過於遠大的目標、有比較多期望，個性樂觀也很有想法和想像力，但可能會高估自己的能力，'+'另外還可能會讓人覺得有點距離感、不好親近。'
+                result=result+(', and the personality is optimistic.') 
                 result_dc=result_dc+('\n'+'  In the picture, the proportion of room, number and person is less than one-third of the picture and is concentrated in the upper part of the picture, indicating that the illustrator may be pursuing lofty goals, and their personality is too optimistic and likes fantasy, but their self-expectation is too high. This person may have a lack of insight, have more and lofty desires, and may also give others a sense of distance that is inaccessible.')
             # 下側
             elif (W/3)<= mx< (2*W/3) and (2*H/3)<=my<=H:
                 print('圖形在下側')
-                result=result+(', and prefers to be in a familiar environment.') # 原：另外你可能比較悲觀和注重現實，對自己比不太有自信，性格比較謹慎在熟悉的事物身邊才比較有安全感。
+                result=result+(', and prefers to be in a familiar environment.') 
                 result_dc=result_dc+('\n'+'  n the picture, the proportion of room, number, and person is less than one-third of the picture and concentrated in the lower part of the picture, indicating that the illustrator may be less secure, less adaptable, and more pessimistic in personality, and have a focus on reality. Their mood tends to be more negative.')
             else:
                 print('圖形在四個角的其中一邊')
-                result=result+(', and more nostalgic.') # 原：另外你比較喜歡在人群中，比較有依賴性，個性也比較保守，偏好舊有的事物，不太喜歡嘗試陌生的東西。
+                result=result+(', and more nostalgic.') 
                 result_dc=result_dc+('\n'+'  In the picture, the proportion of room, number, and person is less than one-third of the picture and concentrated in the corner of the picture, indicating that the illustrator may not have a sense of security and self-confidence, fear independence and rely more on others, and may not like to try new things things, and likes to indulge in fantasy.')
         elif area_obj>(area_pic/3) and area_obj<=(2*area_pic/3):
             result=result+('。')
 
+    # 測試產生的結果
     print('\n'+'\n'+result)
     print('\n'+result_dc)
-
-    #儲存檔案
+    #儲存產生的結果
     name=os.path.basename(image_position)
     name = name.split(".")[0] #去掉檔案格式，取得檔案原名稱
 
@@ -374,6 +374,7 @@ def detect(image_position):
     file.write(warn+'/\n'+result_dc)
     file.close()
 
+    # 測試偵測結果（可產生圖片）
     # cv2.imshow(name, image)
     # cv2.waitKey(0)
 
@@ -391,22 +392,6 @@ def return_img(img_local_path):
         img_stream = img_f.read()
         img_stream = base64.b64encode(img_stream).decode()
     return img_stream
-
-# 定義讀取文字的函式
-def return_text(img_text_local_path):
-    """
-    工具函數:
-    獲取本地圖片流
-    :param img_local_path:文件單張圖片的本地絕對路徑
-    :return: 圖片流
-    """
-    import base64
-    text_stream = ''
-    f = open(img_text_local_path, 'rb')
-    text_stream = f.read()
-    f.close()
-    text_stream = base64.b64encode(text_stream).decode()
-    return text_stream
 
 # detect('/Users/wen/Downloads/HTP/房樹人1658/demo/paper_test-down.png')#測試/Users/wen/Downloads/auto-label/picture/20220608-021.jpg
 

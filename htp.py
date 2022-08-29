@@ -15,7 +15,8 @@ UPLOAD_FOLDER = os.path.join(SRC_PATH)
 print(UPLOAD_FOLDER)
 
 def detect(image_position):
-    print(image_position)
+    # 測試print(image_position)
+    # 導入 YOLO 辨識類別：
     LABELS = open(UPLOAD_FOLDER+"/obj(1)/obj.names").read().strip().split("\n")
     np.random.seed(666)
     COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")
@@ -24,7 +25,6 @@ def detect(image_position):
     # 獲取 YOLO 未連接的輸出圖圖層
     layer = net.getUnconnectedOutLayersNames()
     image = cv2.imread(image_position)
-    # /Users/wen/Downloads/59張畫/55.jpg
     # 獲取圖片尺寸
     (H, W) = image.shape[:2]
     # 從輸入圖像構造一個blob，然后執行 YOLO 對象檢測器的前向傳遞，給我们邊界盒和相關概率
@@ -36,7 +36,8 @@ def detect(image_position):
     # 用於得出檢測時間
     end = time.time()
     print("YOLO took {:.6f} seconds".format(end - start))
-
+    
+    # 建立儲存不同資訊的陣列
     boxes = []
     confidences = []
     classIDs = []
@@ -75,7 +76,7 @@ def detect(image_position):
     # 非最大值抑制，確定唯一邊框，原始參數:idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.3)
     idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.0, 0.3)
         
-    
+    # 建立紀錄偵測各個類別種數的陣列
     door=0
     window=0
     chimney=0
@@ -111,7 +112,7 @@ def detect(image_position):
             #  cv2.putText(影像, 文字, 座標, 字型, 大小, 顏色, 線條寬度, 線條種類)
             cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                 1.0, color, 2, lineType=cv2.LINE_AA)
-
+            # 記錄到個類別偵測到多少物件
             for j in range(len(classes)):
                 if LABELS[classIDs[i]]==LABELS[j]:
                     classes[j]=classes[j]+1
@@ -119,7 +120,6 @@ def detect(image_position):
             txt=txt+'%d'%classIDs[i]+' %f'%txtas[i][0]+' %f'%txtas[i][1]+' %f'%txtas[i][2]+' %f'%txtas[i][3]+'\n'
 
             # 取得房樹人中心座標
-            
             if LABELS[classIDs[i]]=='house':
                 hp=[x+(w/2),y+(h/2)]
                 hps.append(hp)
@@ -138,10 +138,9 @@ def detect(image_position):
         
 
         #print('\n'+txt) # 測試自動標註的檔案
-        
+        # 儲存自動標註的.txt檔案
         name=os.path.basename(image_position)
         name = name.split(".")[0] #去掉檔案格式，取得檔案原名稱
-        
         file = open(UPLOAD_FOLDER+'/txt/'+name+'.txt','w+')
         file.write(txt)
         file.close()
@@ -164,18 +163,12 @@ def detect(image_position):
         cv2.putText(image, 'all', (x2, y2 - 5), cv2.FONT_HERSHEY_SIMPLEX,
                 1.0, (0,0,255), 2, lineType=cv2.LINE_AA)
 
-        
-
-
-  
-
-
     # 分析辨識結果，並產出圖片描述跟代表意義
     result=''
     result_dc=''
     warn=''
     # classes=[0door,1window,2chimney,3crown,4bark,5fruit,6face,7body,8neck,9house,10tree,11person]
-     # 確保有偵測到房樹人後再開始進行分析
+    # 確保有偵測到房樹人後再開始進行分析
     if classes[9]==0 and classes[10]==0 and classes[11]==0:
         result=result+'無法成功辨識，請再次輸入正確含有房樹人的圖片或是聯絡專業人士進行分析。'
         result_dc=result_dc+'此張圖系統無法成功辨識, 需再仔細閱讀和分析。'
@@ -184,75 +177,74 @@ def detect(image_position):
         # 房的結果
         result=result+('  由你的圖可知，')
         if classes[0]>=1:   # 有門
-            result=result+('你不排斥與外界接觸，') # 原：你個性可能比較外向，想要和他人接觸相處，也希望能找到能夠理解自己的人，不過相對起來也可能會比較依賴他人，
+            result=result+('你不排斥與外界接觸，') 
             result_dc=result_dc+('  在圖畫中出現了門，可以推測繪圖者可能比較外向，想要和他人接觸交流和被理解，也喜歡依賴他人；')
         elif classes[0]==0: # 沒門
-            result=result+('你個性較獨立，') # 原：你比較保守，在和他人相處上也比較慢熟，比較喜歡和自己相處的時光，在家庭方面也是屬於比較獨立的人，不太依賴他人，
+            result=result+('你個性較獨立，')
             result_dc=result_dc+('  在圖畫中沒有發現門，推測繪圖者可能對外界比較有防禦心，'
             +'不喜歡他人主動靠近自己，個性也比較冷淡和退縮，在家庭方面可能有一些狀況，彼此之間比較缺乏互動、關係可能比較淡薄；') 
         if classes[1]>=1:   # 有窗
-            result=result+('喜歡交朋友，') # 原：不會排斥讓別人了解自己，也比較希望能和別人交流和溝通，
+            result=result+('喜歡交朋友，')
             result_dc=result_dc+('在圖畫中出現了%d個窗戶'%classes[1]+'，可以得知繪圖者有想要和外界接觸交流的意願；')
         elif classes[1]==0: # 沒窗
-            result=result+('比較謹慎，') # 原：在個性上也比較謹慎，不太會輕易下決定，在和他人相處上也是，比較不會主動去與陌生人交際，
+            result=result+('比較謹慎，') 
             result_dc=result_dc+('在圖畫中沒有看到窗戶的存在，推測繪圖者可能比較退縮，和他人相處上也比較偏執，'+
             '另外還有可能有被害妄想的傾向，但是需要經過謹慎評估過後才能下定論，目前只是推測；') 
             warn=warn+'可能有被害妄想的傾向！'
         if classes[2]>=1:   # 有煙囪
-            result=result+('重視家庭。') # 原：你關注家庭，會在意家庭上給予的溫暖和權力；
+            result=result+('重視家庭。') 
             result_dc=result_dc+('圖畫中出現了煙囪，表示繪圖者可能比較關注家庭和家庭給予的溫暖感。\n')
         elif classes[2]==0: # 沒煙囪
-            result=result+('追求家庭溫暖。') # 原：最近你的情緒可能比較低落，在家庭方面可能有遇到一些問題，需要溫暖和幫助；
+            result=result+('追求家庭溫暖。') 
             result_dc=result_dc+('圖畫中沒有煙囪，推測繪圖者最近可能比較消極，在家庭上缺乏心理上的溫暖。\n')
             warn=warn+'家庭關係可能較不好!'
         # 樹的結果 3crown,4bark,5fruit
         result=result+('另外，')
         if classes[3]>=1:   # 有樹冠
-            result=result+('你較積極，') # 原：你對未來可能有遠大的目標，比較積極上進，對自己也比較有信心，個性樂觀，
+            result=result+('你較積極，') 
             result_dc=result_dc+('  在圖畫中有出現樹冠，推測繪圖者可能比較沒有自信上的問題，且有可能對自己有一定的自信和想要上進的心；')
         elif classes[3]==0: # 沒樹冠
-            result=result+('你不熱衷交際，') # 原：你個性比較內向，不是很擅長跟別人相處，對自己也比較沒有信心，
+            result=result+('你不熱衷交際，') 
             result_dc=result_dc+('  在圖畫中出現了沒有樹冠的樹，繪圖者可能比較自卑和抑鬱，個性比較內向不太能很好的與人交往，'
             +'另外還有患有思覺失調症的可能，但需要進一步了解，由專家診斷後才能確認；')
             warn=warn+'有思覺失調症的可能!'
         if classes[4]>=1:   # 有樹紋 
-            result=result+('觀察力較敏銳') # 原：在過去你可能有遇到一些問題和事件，在心中留下一些影響，且對事物可能比較敏銳，也比較有觀察力，
+            result=result+('觀察力較敏銳') 
             result_dc=result_dc+('在圖畫中的樹上出現了樹皮，表示繪圖者在個性上可能對外界比較敏銳，在成長過程中可能有遇到一些事情，對他造成影響；')
             warn=warn+'成長過程可能有一些傷害!'
         elif classes[4]==0: # 沒樹紋
-            result=result+('且較有活力') # 原：在生活上你比較積極，很有活力和生命力，比較重視現實但也保有一些期望和想像力，
+            result=result+('且較有活力') 
             result_dc=result_dc+('在圖畫中的樹上很單純沒有樹皮，表示繪圖者可能在過去沒有遇到什麼困難，或是已經從困難中走出來了，目前生活比較積極；')
         if classes[5]>=1:   # 有果實
-            result=result+('，期待成功的未來。') # 原：近期你對自己和生活上可能有一些期待和想要達成的目標；
+            result=result+('，期待成功的未來。') 
             result_dc=result_dc+('圖中出現了%d個果實'%classes[5]+'，繪圖者可能有一些慾望和目標。\n')
         elif classes[5]==0: # 沒果實
-            result=result+('。') # 原：目前你可能沒有什麼想要達成的事情，比較謙虛不會自負，但對自己的發展比較沒有頭緒；
+            result=result+('。') 
             result_dc=result_dc+('圖中是單純的樹，樹上沒有果實，繪圖者可能目前沒有設立可實現的目標，對自己的評價也是，目前對自己可能沒有什麼要求。\n')
         # 人的結果 6face,7body,8neck
         result=result+('同時，')
         if classes[7]>=1:   # 有火柴人
-            result=result # 原：你不太願意表露真實的自我，在圖畫中也有所掩飾，且可能對這項測驗比較有防禦性或拒絕的態度，
+            result=result 
             result_dc=result_dc+('  在畫作中出現了火柴人的身體，表示繪圖者具有掩飾性，說謊能力較強，可能不太願意表露真實的自我，有防禦性；')
         elif classes[7]==0: # 沒火柴人
-            result=result # 原：你對此測驗有一定的信任程度，畫作中也沒有特別隱藏和掩飾，
+            result=result 
             result_dc=result_dc+('  在畫作中沒有火柴人的身體，繪圖者對此測驗有一定的信任程度，對測驗比較沒有懷疑的心態，也不太有隱藏和掩飾；')
         if classes[6]>=1:   # 有五官
-            result=result+('你容易適應環境，') # 原：你願意和外界接觸，也比較擅長適應新的環境，
+            result=result+('你容易適應環境，') 
             result_dc=result_dc+('在圖畫中有有五官的人，表示繪圖者可能願意和外界接觸，也比較沒有在新環境適應不良的問題；')
         elif classes[6]==0: # 沒五官
-            result=result+('你個性較害羞，') # 原：你可能不太擅長應付交際方面的事務，個性比較害羞，進入新環境時需要相對較多的時間來適應，
+            result=result+('你個性較害羞，') 
             result_dc=result_dc+('在圖畫中出現了沒有五官的人，表示繪圖者可能偏好逃避人際關係，不太能很好的適應環境，個性比較害羞也比較強調自我。')
         if classes[8]>=1:   # 有脖子
-            result=result+('較不易被情緒左右') # 原：在處理事物時你比較理性，能夠控制自己的情緒，偏好會思考過後再做決定，不太會被情緒左右。
+            result=result+('較不易被情緒左右') 
             result_dc=result_dc+('圖畫中的人有脖子，表示繪圖者在智力與情緒之間是有連結的，比較不會只憑本能做事。\n\n')
         elif classes[8]==0: # 沒脖子
-            result=result+('較易展現個人特質') # 原：在處理事物時你比較感性，做事比較依循著內心的聲音，會勇敢去嘗試任何事物，但遇到問題時比較不太擅長應變。
+            result=result+('較易展現個人特質') 
             result_dc=result_dc+('圖畫中的人是沒有脖子的，可能表示繪圖者在智力與情緒之間沒有連結，做事可能會比較衝動，不顧後果，'
             +'在適應能力上可能也比較弱、乏靈活性。\n\n')
         
         
         # 對房樹整體大小和位置的分析
-
         # 距離關係
         Far=''
         Near=''
@@ -328,7 +320,7 @@ def detect(image_position):
         area_obj=ax*ay
         area_pic=H*W
         
-
+        # 大小及位置關係
         if area_obj>(2*area_pic/3):
             print('畫面大於三分之二')
             result=result+('，是率直熱情的人。') # 原：而在個性上你可能比較善待自己、重視自身，在內心的情緒是比較高昂的，可能有好動、率直和易受情緒波動影響的特質。
@@ -385,9 +377,10 @@ def detect(image_position):
         elif area_obj>(area_pic/3) and area_obj<=(2*area_pic/3):
             result=result+('。')
 
+    # 測試產生的結果
     print('\n'+'\n'+result)
     print('\n'+result_dc)
-
+    # 儲存產生的結果
     name=os.path.basename(image_position)
     name = name.split(".")[0] #去掉檔案格式，取得檔案原名稱
 
@@ -399,11 +392,11 @@ def detect(image_position):
     file.write(warn+'/\n'+result_dc)
     file.close()
 
-
+    # 測試偵測結果（可產生圖片）
     # cv2.imshow(name, image)
     # cv2.waitKey(0)
 
-# 定義讀取圖片的函式
+# 定義讀取圖片的函式，供網頁使用
 def return_img(img_local_path):
     """
     工具函數:
@@ -418,21 +411,6 @@ def return_img(img_local_path):
         img_stream = base64.b64encode(img_stream).decode()
     return img_stream
 
-# 定義讀取文字的函式
-def return_text(img_text_local_path):
-    """
-    工具函數:
-    獲取本地圖片流
-    :param img_local_path:文件單張圖片的本地絕對路徑
-    :return: 圖片流
-    """
-    import base64
-    text_stream = ''
-    f = open(img_text_local_path, 'rb')
-    text_stream = f.read()
-    f.close()
-    text_stream = base64.b64encode(text_stream).decode()
-    return text_stream
 
 #detect('/Users/wen/Downloads/web-HTP/result-pic/2022-08-15-161143.png')#測試/Users/wen/Downloads/auto-label/picture/20220608-021.jpg
 

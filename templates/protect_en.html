@@ -1,3 +1,4 @@
+<!--輸入密碼的畫面-->
 <!DOCTYPE HTML>
 <!--
 	Stellar by HTML5 UP
@@ -28,19 +29,17 @@
 
 						<!-- Content -->
 							<section id="content" class="main">
-								<!--放圖片的-->
-								<!--span class="image main"><img src="images/pic04.jpg" alt="" /></span-->
 								
 								<!-- Get Started -->
-							<section id="cta" class="main special">
-								<header class="major">
-									<h2>ENTER PASSWORD</h2>
-									<p></p>
-								</header>
-							</section>
+								<section id="cta" class="main special">
+									<header class="major">
+										<h2>ENTER PASSWORD</h2>
+										<p></p>
+									</header>
+								</section>
 								<footer class="major">
 									<ul class="actions special">
-										
+										<!-- 輸入帳號密碼，並連結到/password_en的網頁，POST傳送內容 -->
 										<form method="POST" action="{{url_for('password_en')}}">
 											<label for="name">Account</label>
                                             <div class="col-6 col-12-xsmall">
@@ -54,21 +53,12 @@
                                                 <li><a id="upload_img" style="display:none;" class="button"><input type="submit" value="Submit"></a>
                                                     Submit</li>
                                             </label>
+											<!-- 回到主畫面 -->
                                             <label class="button">
                                                 <a id="upload_img" style="display:none;" href="/" ><input type="button"></a>
                                                 <i class="fa fa-photo"></i> Home
                                             </label>		
 										</form>
-                                        <script>
-                                            function checkpost(){
-                                            if(document.forms[0].name.value=="DOC"&&document.forms[0].pw.value!="result"){
-                                            window.location='psychologist';
-                                            }else{
-                                            alert("用戶名或密碼不正屬確！")
-                                            return false;
-                                            }
-                                            }
-                                        </script>
 									</ul>
 								</footer>
 							</section>

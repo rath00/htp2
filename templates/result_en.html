@@ -28,28 +28,27 @@
 
 						<!-- Content -->
 							<section id="content" class="main">
-								<!--放圖片的-->
-								<!--span class="image main"><img src="images/pic04.jpg" alt="" /></span-->
 								
 								<!-- Get Started -->
-							<section id="cta" class="main special">
-								<header class="major">
-									<h2>Analysis Results</h2>
-									<p><b><font color="#E00000">The following results are for reference only. Please contact professionals for detailed analysis.</font></b></p>
-								</header>
-							</section>
+								<section id="cta" class="main special">
+									<header class="major">
+										<h2>Analysis Results</h2>
+										<!-- 用粗體<b>和紅字<font>顯示警示語 -->
+										<p><b><font color="#E00000">The following results are for reference only. Please contact professionals for detailed analysis.</font></b></p>
+									</header>
+								</section>
 								<div class="col-4"><span class="image left"><img src="data:;base64,{{ img_stream }}" alt="" /></span></div>
+								<!-- 顯示文字結果 -->
 								<p>
 									<h3>Let me guess...</h3>
 									{{text}}
 									
 								</p>
-								
+								<!-- 選擇要回主頁還是查看詳細結果 -->
 								<footer class="major">
 									<ul class="actions special">
-										
+										<!-- 連結到/upload_file2_en的網頁，POST傳送內容 -->
 										<form method="POST" action="{{url_for('upload_file2_en')}}">
-											
 												<label class="button">
 													<li><a id="upload_img" style="display:none;" class="button"><input type="submit" value="Submit"></a>
 													More</li>
@@ -59,7 +58,6 @@
 													<i class="fa fa-photo"></i> Home
 												</label>
 										</form>
-										
 									</ul>
 								</footer>
 							</section>
