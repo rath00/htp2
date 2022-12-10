@@ -91,6 +91,10 @@ def upload_file():
         filetxt = open(UPLOAD_FOLDER+'/filename.txt','w+')
         filetxt.write(file.filename)
         filetxt.close()
+        # 儲存此張圖片名稱
+        filetxt = open(UPLOAD_FOLDER+'/filenames.txt','a')
+        filetxt.write(file.filename+'\n')
+        filetxt.close()
         # 將取得的結果傳到網頁上，並與result.html網頁連接
         return render_template('result.html', img_stream=img_stream, text=text_stream, text_dc=text_stream_dc)
     return redirect(url_for('result'))
@@ -257,4 +261,4 @@ def password_en():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True, port=5051)
+    app.run(host='0.0.0.0', debug=True, port=5050)

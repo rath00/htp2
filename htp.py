@@ -6,6 +6,7 @@ import time
 import cv2
 import os
 import pathlib
+import openpyxl #使用excel的檔案
 
 
 # 取得目前檔案所在的資料夾 
@@ -13,6 +14,7 @@ SRC_PATH =  pathlib.Path(__file__).parent.absolute()
 UPLOAD_FOLDER = os.path.join(SRC_PATH)
 
 print(UPLOAD_FOLDER)
+
 
 def detect(image_position):
     # 測試print(image_position)
@@ -167,12 +169,25 @@ def detect(image_position):
     result=''
     result_dc=''
     warn=''
+    # 儲存檔案名稱到excel中
+    name=os.path.basename(image_position)
+    name = name.split(".")[0] #去掉檔案格式，取得檔案原名稱
+    wb = openpyxl.load_workbook(UPLOAD_FOLDER+'/HTP.xlsx', data_only=True) #開啟HTP.xlsx檔案
+    s1 = wb['工作表1']        # 取得工作表名稱為「工作表1」的內容
+    s2 = wb.active           # 取得開啟試算表後立刻顯示的工作表 ( 範例為工作表 2 )
+    s1.insert_rows(2)
+    s1.cell(2,1).value=name
+    for i in range (len(classes)):
+        s1.cell(2,i+2).value=classes[i]
+
+
     # classes=[0door,1window,2chimney,3crown,4bark,5fruit,6face,7body,8neck,9house,10tree,11person]
     # 確保有偵測到房樹人後再開始進行分析
     if classes[9]==0 and classes[10]==0 and classes[11]==0:
         result=result+'無法成功辨識，請再次輸入正確含有房樹人的圖片或是聯絡專業人士進行分析。'
         result_dc=result_dc+'此張圖系統無法成功辨識, 需再仔細閱讀和分析。'
         warn=warn+'無法成功進行辨識!'
+        s1.cell(2,18).value='DETECT ERROR!'
     else:
         # 房的結果
         result=result+('  由你的圖可知，')
@@ -289,29 +304,35 @@ def detect(image_position):
             result=result+('。整體而言，你和家人感情良好')
             result_dc=result_dc+('  在圖畫中房子和樹之間的距離是最近的，'
             +'繪圖者可能與家人相處較密切')
+            s1.cell(2,14).value = 'ht'
         elif Near=='tp':
             print('樹和人離的最近')
             result=result+('。整體而言，你和大家感情都不錯')
             result_dc=result_dc+('  在圖畫中樹和人之間的距離是最近的，'
             +'繪圖者與外界的關係良好')
+            s1.cell(2,14).value = 'tp'
         elif Near=='ph':
             print('人和房子離的最近')
             result=result+('。整體而言，你喜歡你現在的家庭')
             result_dc=result_dc+('  在圖畫中人和房子之間的距離是最近的，'
             +'繪圖者可能喜歡他的家庭，且比較依賴家庭')
+            s1.cell(2,14).value = 'ph'
         # 畫面中距離最遠的物件
         if Far=='ht':
             print('房子和樹離的最遠')
             result_dc=result_dc+('；在圖畫中房子和樹之間的距離是最遠的，'
             +'繪圖者可能與家人相處上較不密切。')
+            s1.cell(2,15).value = 'ht'
         elif Far=='tp':
             print('樹和人離的最遠')
             result_dc=result_dc+('；在圖畫中樹和人之間的距離是最遠的，'
             +'繪圖者可能與外界比較疏離。')
+            s1.cell(2,15).value = 'tp'
         elif Far=='ph':
             print('人和房子離的最遠')
             result_dc=result_dc+('；在圖畫中人和房子之間的距離是最遠的，'
             +'繪圖者可能不太喜歡現在的家庭關係，與家人之間比較疏離。')
+            s1.cell(2,15).value = 'ph'
         if classes[9]>1 or classes[10]>1 or classes[11]>1:
             result_dc=result_dc+('但系統偵測到在圖畫中有%d個房子、'%classes[9]+'%d個樹'%classes[10]+'和%d個人，'%classes[11]+'彼此的互動關係可能需要再另外確認！')
 
@@ -326,11 +347,15 @@ def detect(image_position):
             result=result+('，是率直熱情的人。') # 原：而在個性上你可能比較善待自己、重視自身，在內心的情緒是比較高昂的，可能有好動、率直和易受情緒波動影響的特質。
             result_dc=result_dc+('\n'+'  在圖畫中，房、數、人三者的比例已經超過畫面的三分之二，繪圖者可能比較強調自我的存在，對環境和氣氛的變化比較沒有感覺，'
             +'但內心充滿緊張、幻想和敵意，比較具有侵略性、恐嚇性和攻擊性，也比較好動、情緒化跟率直。')
+            s1.cell(2,16).value = '>2/3'
         elif area_obj<(area_pic/9):
             print('畫面小於九分之一')
             result=result+('，是內向但不討厭人群的人') # 原：而在個性上你可能比較內向， 不太擅長適應新環境，對自己也比較沒有信心，也比較依賴他人。
             result_dc=result_dc+('\n'+'  在圖畫中，房、數、人三者的比例已經小於畫面的九分之一，繪圖者可能比較害羞內向，不適應環境，'
             +'且對自我比較壓抑不太有自信，可能缺乏安全感，比較退縮和依賴別人，若有人打破他的自我意識時，可能就會顯得比較焦慮和沮喪。')
+            s1.cell(2,16).value = '<1/9'
+        else:
+            s1.cell(2,16).value = 'Normal'
         
         if area_obj<=(area_pic/3):
             # print('圖畫比重小於三分之一了，要比較位置！') # 檢查和測試用   
@@ -343,6 +368,7 @@ def detect(image_position):
                 result=result+('，且較容易懷念過去。') # 原：另外你可能也比較感性，在個性上因此比較容易衝動，另外也相對念舊，會留念過去。
                 result_dc=result_dc+('\n'+'  在圖畫中，房、數、人三者的比例小於畫面的三分之一且集中在畫面左間，'
                 +'左側象徵了過去、感情世界和女性化，這表示繪圖者在個性上可能比較衝動，且可能專注於過去，對過去有所留念。')
+                s1.cell(2,17).value = 'left'
             # 中間
             elif (W/3)<= mx< (2*W/3) and (H/3)<=my<=(2*H/3):
                 print('圖形在中間')
@@ -350,12 +376,14 @@ def detect(image_position):
                 result_dc=result_dc+('\n'+'  在圖畫中，房、數、人三者的比例小於畫面的三分之一且集中在畫面中間，'
                 +'表示了安全感，且自我意識可能較強，比較以自我為中心，若是成人的話，可能在內在有不安感，想要努力維持內心的平衡；'
                 +'若是兒童的話，可能表示他比較在意自我，可塑性較差，不太能客觀的認識環境。')
+                s1.cell(2,17).value = 'middle'
             # 右側
             elif (2*W/3)<= mx< W and (H/3)<=my<=(2*H/3):
                 print('圖形在右邊')
                 result=result+('，且對未來有憧憬。') # 原：另外你可能比較理性，比較能自我控制，對未來抱有憧憬。
                 result_dc=result_dc+('\n'+'  在圖畫中，房、數、人三者的比例小於畫面的三分之一且集中在畫面右側，'
                 +'右側象徵未來、理智和男性化，這表示繪圖者在個性上可能比較理性，且可能比較更關注未來而不是現在。')
+                s1.cell(2,17).value = 'right'
             # 上側
             elif (W/3)<= mx< (2*W/3) and 0<=my<=(H/3):
                 print('圖形在上側')
@@ -363,26 +391,30 @@ def detect(image_position):
                 result_dc=result_dc+('\n'+'  在圖畫中，房、數、人三者的比例小於畫面的三分之一且集中在畫面上部，'
                 +'表示繪圖者可能正在追求遠大的目標，個性過於樂觀、喜歡幻想，但自我期許太高也比較缺乏洞察力，有比較多和遠大的慾望，'
                 +'另外可能還會給別人難以接近的距離感。')
+                s1.cell(2,17).value = 'up'
             # 下側
             elif (W/3)<= mx< (2*W/3) and (2*H/3)<=my<=H:
                 print('圖形在下側')
                 result=result+('，且較喜歡在熟悉的環境。') # 原：另外你可能比較悲觀和注重現實，對自己比不太有自信，性格比較謹慎在熟悉的事物身邊才比較有安全感。
                 result_dc=result_dc+('\n'+'  在圖畫中，房、數、人三者的比例小於畫面的三分之一且集中在畫面下部，'
                 +'表示繪圖者可能比較沒有安全感，不太能適應，個性上也比較悲觀和注重現實，情緒有比較低落的傾向。')
+                s1.cell(2,17).value = 'down'
             else:
                 print('圖形在四個角的其中一邊')
                 result=result+('，且較念舊。') # 原：另外你比較喜歡在人群中，比較有依賴性，個性也比較保守，偏好舊有的事物，不太喜歡嘗試陌生的東西。
                 result_dc=result_dc+('\n'+'  在圖畫中，房、數、人三者的比例小於畫面的三分之一且集中在畫面角落，'
                 +'表示繪圖者可能不夠有安全感跟自信，害怕獨立比較依賴他人，也可能不太喜歡嘗試新的事物，喜歡沈迷在幻想中。')
+                s1.cell(2,17).value = 'corner'
         elif area_obj>(area_pic/3) and area_obj<=(2*area_pic/3):
             result=result+('。')
+            s1.cell(2,17).value = 'Normal'
 
     # 測試產生的結果
     print('\n'+'\n'+result)
     print('\n'+result_dc)
     # 儲存產生的結果
-    name=os.path.basename(image_position)
-    name = name.split(".")[0] #去掉檔案格式，取得檔案原名稱
+    #name=os.path.basename(image_position)
+    #name = name.split(".")[0] #去掉檔案格式，取得檔案原名稱
 
     file = open(UPLOAD_FOLDER+'/result/'+name+'-result.txt','w+')
     file.write(result)
@@ -391,6 +423,9 @@ def detect(image_position):
     file = open(UPLOAD_FOLDER+'/result-dc/'+name+'-result-dc.txt','w+')
     file.write(warn+'/\n'+result_dc)
     file.close()
+    
+    # 儲存excel檔案   
+    wb.save('HTP.xlsx')
 
     # 測試偵測結果（可產生圖片）
     # cv2.imshow(name, image)
@@ -411,6 +446,5 @@ def return_img(img_local_path):
         img_stream = base64.b64encode(img_stream).decode()
     return img_stream
 
-
-#detect('/Users/wen/Downloads/web-HTP/result-pic/2022-08-15-161143.png')#測試/Users/wen/Downloads/auto-label/picture/20220608-021.jpg
+detect('/Users/wen/Downloads/HTP/htp-2/result-pic/2022-11-23-003716.png')#測試/Users/wen/Downloads/auto-label/picture/20220608-021.jpg
 

@@ -6,6 +6,7 @@ import time
 import cv2
 import os
 import pathlib
+import openpyxl #使用excel的檔案
 
 # 取得目前檔案所在的資料夾 
 SRC_PATH =  pathlib.Path(__file__).parent.absolute()
@@ -164,18 +165,30 @@ def detect(image_position):
         cv2.putText(image, 'all', (x2, y2 - 5), cv2.FONT_HERSHEY_SIMPLEX,
                 1.0, (0,0,255), 2, lineType=cv2.LINE_AA)
 
-    
-
     # 分析辨識結果，並產出圖片描述跟代表意義
     result=''
     result_dc=''
     warn=''
+
+    # 儲存檔案名稱到excel中
+    name=os.path.basename(image_position)
+    name = name.split(".")[0] #去掉檔案格式，取得檔案原名稱
+    wb = openpyxl.load_workbook(UPLOAD_FOLDER+'/HTP.xlsx', data_only=True) #開啟HTP.xlsx檔案
+    names = wb.sheetnames    # 讀取 Excel 裡所有工作表名稱
+    s1 = wb['工作表1']        # 取得工作表名稱為「工作表1」的內容
+    s2 = wb.active           # 取得開啟試算表後立刻顯示的工作表 ( 範例為工作表 2 )
+    s1.insert_rows(2)
+    s1.cell(2,1).value=name
+    for i in range (len(classes)):
+        s1.cell(2,i+2).value=classes[i]
+
     # classes=[0door,1window,2chimney,3crown,4bark,5fruit,6face,7body,8neck,9house,10tree,11person]
     # 確保有偵測到房樹人後再開始進行分析
     if classes[9]==0 and classes[10]==0 and classes[11]==0:
         result=result+'Unable to identify successfully. Please re-enter the correct pictures of houses, trees, and people, or contact professionals for analysis.'
         result_dc=result_dc+'This picture system cannot be successfully identified, and needs to be read and analyzed carefully.'
         warn=warn+'DETECT ERROR!'
+        s1.cell(2,18).value='DETECT ERROR!'
     else:
         # 房的結果
         result=result+('  It can be seen from your picture,')
@@ -286,24 +299,30 @@ def detect(image_position):
             print('房子和樹離的最近')
             result=result+('.Overall, the relationship between you and your family is good')
             result_dc=result_dc+('  The illustrator may be close and have a good relationship with the family;')
+            s1.cell(2,14).value = 'ht'
         elif Near=='tp':
             print('樹和人離的最近')
             result=result+('.Overall, you and everyone are on good terms')
             result_dc=result_dc+('  The illustrator has a good relationship with the outside world;')
+            s1.cell(2,14).value = 'tp'
         elif Near=='ph':
             print('人和房子離的最近')
             result=result+('.Overall, you like your current home')
             result_dc=result_dc+('  The illustrator may like their family and be more dependent on their family;')
+            s1.cell(2,14).value = 'ph'
         # 畫面中距離最遠的物件
         if Far=='ht':
             print('房子和樹離的最遠')
             result_dc=result_dc+('The illustrator may be less close to family members.')
+            s1.cell(2,15).value = 'ht'
         elif Far=='tp':
             print('樹和人離的最遠')
             result_dc=result_dc+('The illustrator can be alienated from the outside world.')
+            s1.cell(2,15).value = 'tp'
         elif Far=='ph':
             print('人和房子離的最遠')
             result_dc=result_dc+('The illustrator may not like the current family relationship and is more distant from the family.')
+            s1.cell(2,15).value = 'ph'
         if classes[9]>1 or classes[10]>1 or classes[11]>1:
             result_dc=result_dc+('But the system detects that there are %dhouses, '%classes[9]+'%d trees'%classes[10]+' and %d people in the picture,'%classes[11]+'so the interaction between them may need to be confirmed again!')
             
@@ -317,10 +336,14 @@ def detect(image_position):
             print('畫面大於三分之二')
             result=result+(', is a straightforward and enthusiastic person') 
             result_dc=result_dc+('\n'+'  The illustrator may emphasize the existence of self, and is less aware of changes in the environment and atmosphere, but their heart is full of tension, fantasy and hostility. May be more aggressive, intimidating, and aggressive, but also more active, emotional, and straightforward.')
+            s1.cell(2,16).value = '>2/3'
         elif area_obj<(area_pic/9):
             print('畫面小於九分之一')
             result=result+(', is an introverted person but does not hate crowds') 
             result_dc=result_dc+('\n'+'  The illustrator may be shy and introverted, unsuitable for the environment, and less confident in self-repression, may lack a sense of security, and be withdrawn, and dependent on others. When someone breaks their sense of self, they may appear more anxious and depressed.')
+            s1.cell(2,16).value = '<1/9'
+        else:
+            s1.cell(2,16).value = 'Normal'
         
         if area_obj<=(area_pic/3):
             # print('圖畫比重小於三分之一了，要比較位置！') # 檢查和測試用   
@@ -332,32 +355,38 @@ def detect(image_position):
                 print('圖形在左邊')
                 result=result+(', likely to long for, miss, or yearn for the past.') 
                 result_dc=result_dc+('\n'+'  In the picture, the proportion of room, number and person is less than one-third of the picture and concentrated in the left side of the picture. The left side symbolizes the past, emotional world and femininity, which means that the illustrator may be impulsive in personality, and may focus on the past and have a memory of the past.')
+                s1.cell(2,17).value = 'left'
             # 中間
             elif (W/3)<= mx< (2*W/3) and (H/3)<=my<=(2*H/3):
                 print('圖形在中間')
                 result=result+('。') 
                 result_dc=result_dc+('\n'+'  Indicates a sense of security. The self-awareness of the illustrator may be strong. This person may be more self-centered if it is an adult (it may be in the middle of the picture). There is a sense of unease inside, and this person may want to try to maintain inner balance; if a disadvantaged child is concerned, it may indicate that they are more concerned about themself, has poor plasticity, and is not able to objectively understand the environment.')
+                s1.cell(2,17).value = 'middle'
             # 右側
             elif (2*W/3)<= mx< W and (H/3)<=my<=(2*H/3):
                 print('圖形在右邊')
                 result=result+(', and has a vision for the future.') 
                 result_dc=result_dc+('\n'+'  In the picture, the proportion of room, number and person is less than one-third of the picture and concentrated on the right side of the picture. The right side symbolizes the future, rationality and masculinity, which means that the illustrator may be more rational in personality, and may be more masculine. This person may focus on the future rather than the present.')
+                s1.cell(2,17).value = 'right'
             # 上側
             elif (W/3)<= mx< (2*W/3) and 0<=my<=(H/3):
                 print('圖形在上側')
                 result=result+(', and the personality is optimistic.') 
                 result_dc=result_dc+('\n'+'  In the picture, the proportion of room, number and person is less than one-third of the picture and is concentrated in the upper part of the picture, indicating that the illustrator may be pursuing lofty goals, and their personality is too optimistic and likes fantasy, but their self-expectation is too high. This person may have a lack of insight, have more and lofty desires, and may also give others a sense of distance that is inaccessible.')
+                s1.cell(2,17).value = 'up'
             # 下側
             elif (W/3)<= mx< (2*W/3) and (2*H/3)<=my<=H:
                 print('圖形在下側')
                 result=result+(', and prefers to be in a familiar environment.') 
                 result_dc=result_dc+('\n'+'  n the picture, the proportion of room, number, and person is less than one-third of the picture and concentrated in the lower part of the picture, indicating that the illustrator may be less secure, less adaptable, and more pessimistic in personality, and have a focus on reality. Their mood tends to be more negative.')
+                s1.cell(2,17).value = 'down'
             else:
                 print('圖形在四個角的其中一邊')
                 result=result+(', and more nostalgic.') 
                 result_dc=result_dc+('\n'+'  In the picture, the proportion of room, number, and person is less than one-third of the picture and concentrated in the corner of the picture, indicating that the illustrator may not have a sense of security and self-confidence, fear independence and rely more on others, and may not like to try new things things, and likes to indulge in fantasy.')
         elif area_obj>(area_pic/3) and area_obj<=(2*area_pic/3):
             result=result+('。')
+            s1.cell(2,17).value = 'Normal'
 
     # 測試產生的結果
     print('\n'+'\n'+result)
@@ -373,6 +402,9 @@ def detect(image_position):
     file = open(UPLOAD_FOLDER+'/result-dc/'+name+'-result-dc.txt','w+')
     file.write(warn+'/\n'+result_dc)
     file.close()
+
+    # 儲存excel檔案   
+    wb.save('HTP.xlsx')
 
     # 測試偵測結果（可產生圖片）
     # cv2.imshow(name, image)
