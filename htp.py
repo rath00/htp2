@@ -23,7 +23,7 @@ def detect(image_position):
     np.random.seed(666)
     COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")
     # 導入 YOLO 配置和權重文件並加載網路：
-    net = cv2.dnn.readNetFromDarknet(UPLOAD_FOLDER+'/obj(1)/yolov4-tiny-obj.cfg', UPLOAD_FOLDER+'/obj(1)/yolov4-tiny-obj_best.weights')
+    net = cv2.dnn.readNet(UPLOAD_FOLDER+'/obj(1)/best.xml', UPLOAD_FOLDER+'/obj(1)/best.bin')
     # 獲取 YOLO 未連接的輸出圖圖層
     layer = net.getUnconnectedOutLayersNames()
     image = cv2.imread(image_position)
